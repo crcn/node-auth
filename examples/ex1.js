@@ -7,10 +7,23 @@ var auth = require("../").init({
 });
 
 
+auth.connection.model("friends", new mongoose.Schema({
+	name: String,
+	last: String
+}))
+
+
+auth.sharedCollections.add("friends");
+
+
 var on = outcome.error(function(err) {
 	console.error(err.stack);
 }),
-user;
+user,
+user2;
+
+
+
 
 
 step(
@@ -25,24 +38,35 @@ step(
 	/**
 	 */
 
-	on.success(function(u) {
-		user = u;
-		console.log(u)
-		u.getToken(this);
+	on.success(function(data) {
+		user = data.user;
+		auth.signup({ username: "john", email: "craig.j.condon+test@gmail.com", password: "test"}, this);
 	}),
 
 	/**
 	 */
 
-	on.success(function(token) {
-		console.log(token);
-		this();
+	on.success(function(data) {
+		user2 = data.user;
+
+		//thrown into a job
+		user.grantPermission(user2, ["*:friends"]);
+
+		//wait for permissions to be granted
+		auth.worker.once("grant", this);
 	}),
 
 	/**
 	 */
 
-	function() {
-		user.remove();
-	}
+	on.success(function() {
+		auth.sandbox("*:friends").login({ username: "john", password: "test" }, this);
+	}),
+
+	/**
+	 */
+
+	on.success(function(data) {
+		console.log(data.token.scopes);
+	})
 );

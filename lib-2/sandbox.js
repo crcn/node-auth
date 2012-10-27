@@ -9,10 +9,8 @@ module.exports = structr({
 
 	"__construct": function(auth, permissions) {
 		this.auth  = auth;
-		this._requiredPermissions = [];
 
-		module.exports.explodePermissions(this._requiredPermissions = [], permissions);
-		console.log(this._requiredPermissions);
+		module.exports.explodePermissions(this._requiredPermissions = {}, permissions);
 	},
 
 	/**
@@ -56,7 +54,7 @@ module.exports = structr({
 	 * checks if a given token has authorization
 	 */
 
-	"_getAuthorizedScopes": function(token) {
+	"_getAccess": function(token) {
 
 		var profiles    = [];
 		var collections = {};
@@ -67,9 +65,10 @@ module.exports = structr({
 
 			for(var j = scope.permissions.length; j--;) {	
 
-				var perm = module.exports.parsePermission(scope.permissions[i]);
+				var perm = module.exports.parsePermission(scope.permissions[j]);
 
-				if(~this._requiredScopes.indexOf(module.exports.stringifyPermission(perm))) {
+
+				if(~this._requiredPermissions[module.exports.stringifyPermission(perm)]) {
 					profiles.push(scope.profile);
 
 					if(perm.collection != "*" && perm.item != "*") {
@@ -89,18 +88,25 @@ module.exports = structr({
 
 
 module.exports.explodePermissions = function(into, permissions) {
-	for(var i = permissions.length; i--;) {
-		var permission = permissions[i];
 
-		var ops = [
-			[permission.method, "*", "*"], //GET, DELETE, PUT, PATCH
-			[permission.method, permission.collection, "*"], //groups, users, friends
-			[permission.method, permission.collection, permission.item] //specific item id
-		];
-
-		for(var i ops.length; i--;) {
-			into.push(module.exports.parsePermission(ops[i]));
+	if(permissions instanceof Array) {
+		for(var i = permissions.length; i--;) {
+			module.exports.explodePermissions(into, permissions[i]);
 		}
+		return;
+	}
+
+
+	var permission = module.exports.parsePermission(permissions);
+
+	var ops = [
+		[permission.method, "*", "*"], //GET, DELETE, PUT, PATCH
+		[permission.method, permission.collection, "*"], //groups, users, friends
+		[permission.method, permission.collection, permission.item] //specific item id
+	];
+
+	for(var j = ops.length; j--;) {
+		into[module.exports.stringifyPermission(ops[j])] = 1;
 	}
 }
 
@@ -127,7 +133,11 @@ module.exports.parsePermissions = function(rawPermissions) {
 module.exports.parsePermission = function(permission) {
 	var method, collection, item;
 
-	if(typeof permission === "string") {
+	if(permission instanceof Array) {
+		permission = permission.join(":");
+	} 
+
+	if(typeof permission == "string") {
 		var permissionParts = permission.split(":");
 		method              = permissionParts.shift();
 		collection          = permissionParts.shift();

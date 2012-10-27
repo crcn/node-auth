@@ -1,7 +1,10 @@
 var structr = require("structr"),
 schemas = require("./schemas"),
 _ = require("underscore"),
-step = require("step");
+step = require("step"),
+Sandbox = require("./sandbox"),
+outcome = require("outcome"),
+SharedCollections = require("./SharedCollections");
 
 /**
  * database delegate
@@ -13,29 +16,38 @@ module.exports = structr({
 	 */
 
 	"__construct": function(options) {
-		this._connection   = options.connection;
-		this.ProfileModel  = this._connection.model("profile", schemas.Profile);
-		this.TokenModel    = this._connection.model("token", schemas.Token);
-		this.ScopeModel    = this._connection.model("scope", schemas.Token.Scope);
-		this.defaultTokenTTL = options.tokenTTL || -1; //never
+		this.connection        = options.connection;
+		this.ProfileModel      = this.connection.model("profile", schemas.Profile);
+		this.ProfileModel.auth = this;
+
+		this.TokenModel        = this.connection.model("token", schemas.Token);
+		this.ScopeModel        = this.connection.model("scope", schemas.Token.Scope);
+		this.sharedCollections = new SharedCollections(this);
+		this.defaultTokenTTL   = options.tokenTTL || -1; //never
 	},
 
 	/**
+	 * sandboxed used to grant access for other accounts to share info
 	 */
 
 	"sandbox": function(requiredPermissions) {
-		return new Sandbox(this, Sandbox.parsePermissions(requiredPermissions));
+		console.log(requiredPermissions)
+		return new Sandbox(this, requiredPermissions);
 	},
 
 	/**
+	 * signs the user up
 	 */
 
 	"signup": function(options, onSignup) {
 		var user = new this.ProfileModel(options);
-		user.save(onSignup);
+		user.save(outcome.error(onSignup).success(function() {
+			onSignup(null, { user: user });
+		}));
 	},
 
 	/**
+	 * logs a user in
 	 */
 
 	"login": function(options, onLogin) {
@@ -83,7 +95,7 @@ module.exports = structr({
 			q.email = options.email;
 		}
 
-		this.ProfileModel.find(q, onLogin);
+		q.password = schemas.Profile.hashPass(q.password);
 
 
 		step(
@@ -92,7 +104,7 @@ module.exports = structr({
 			 */
 
 			function() {
-				self.ProfileModel.find(q, this)
+				self.ProfileModel.findOne(q, this)
 			},
 
 			/**
