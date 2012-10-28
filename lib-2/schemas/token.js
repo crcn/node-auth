@@ -5,6 +5,10 @@ crypto = require("crypto"),
 Profile = require("./profile");
 
 
+/**
+ * tokens are like keys to ONE particular account. 
+ */
+
 var Scope = new Schema({
 
 	/**
@@ -75,6 +79,21 @@ module.exports.Scope = Scope;
 schema.methods.regenerateKey = function(onGenerate) {
 	this.key = generateKey();
 	this.save(onGenerate);
+}
+
+
+/**
+ */
+
+schema.statics.getMainToken = function(account, callback) {
+
+}
+
+/**
+ */
+
+schema.statics.createToken = function(account, callback) {
+
 }
 
 /**

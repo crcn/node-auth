@@ -195,6 +195,11 @@ SchemaArray.prototype.$conditionalHandlers = {
       return this.castForQuery(val);
     }
   , '$elemMatch': function (val) {
+      if (val.$in) {
+        val.$in = this.castForQuery('$in', val.$in);
+        return val;
+      }
+
       var query = new Query(val);
       query.cast(this.casterConstructor);
       return query._conditions;
@@ -206,10 +211,10 @@ SchemaArray.prototype.$conditionalHandlers = {
   , '$regex': SchemaArray.prototype.castForQuery
   , '$near': SchemaArray.prototype.castForQuery
   , '$nearSphere': SchemaArray.prototype.castForQuery
-  , '$gt': castToNumber
-  , '$gte': castToNumber
-  , '$lt': castToNumber
-  , '$lte': castToNumber
+  , '$gt': SchemaArray.prototype.castForQuery
+  , '$gte': SchemaArray.prototype.castForQuery
+  , '$lt': SchemaArray.prototype.castForQuery
+  , '$lte': SchemaArray.prototype.castForQuery
   , '$within': function(val) {
       var query = new Query(val);
       query.cast(this.casterConstructor)
