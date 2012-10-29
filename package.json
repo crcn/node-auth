@@ -1,6 +1,6 @@
 {
   "name": "auth",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ERROR: No README.md file found!",
   "main": "./lib/index.js",
   "scripts": {
@@ -11,5 +11,11 @@
     "url": "git://github.com/crcn/node-auth.git"
   },
   "author": "",
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "outcome": "0.0.x",
+    "step": "0.0.x",
+    "structr": "0.2.x",
+    "underscore": "1.4.x"
+  }
 }
