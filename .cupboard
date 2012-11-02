@@ -1,2 +1,2 @@
-[publish]
-npm publish --force; git add -A; git commit -m "$@"; git push origin master
+[commands]
+proj = subl .
