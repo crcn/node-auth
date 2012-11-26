@@ -17,6 +17,13 @@
     "step": "0.0.x",
     "structr": "0.2.x",
     "underscore": "1.4.x",
-    "dsync": "0.0.x"
+    "dsync": "0.0.x",
+    "vine": "0.0.x",
+    "dustjs-linkedin": "1.1.x"
+  },
+  "devDependencies": {
+    "plugin": "*",
+    "plugin-express": "0.0.x",
+    "plugin-mongodb": "0.0.x"
   }
 }
