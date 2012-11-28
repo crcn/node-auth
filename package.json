@@ -22,6 +22,7 @@
     "dustjs-linkedin": "1.1.x",
     "seq": "0.3.x"
   },
+  "browserify": "./browser/index.js",
   "devDependencies": {
     "plugin": "*",
     "plugin-express": "0.0.x",
