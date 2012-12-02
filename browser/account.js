@@ -3,6 +3,8 @@ _ = require("underscore");
 
 exports.connect = function(host) {
 
+	var host = window.location.host;
+
 	var Account;
 	return Account = structr({
 
@@ -24,7 +26,7 @@ exports.connect = function(host) {
 		 */
 
 		"static login": function(data, onLogin) {
-			
+
 			if(arguments.length == 1) {
 				onLogin = data;
 				data = {};
