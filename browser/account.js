@@ -5,13 +5,26 @@ exports.connect = function(host) {
 
 	var Account;
 	return Account = structr({
+
+		/**
+		 */
+
 		"__construct": function(data) {
 			_.extend(this, data);
 		},
+
+		/**
+		 */
+
 		"save": function() {
 			//TODO
 		},
+
+		/**
+		 */
+
 		"static login": function(data, onLogin) {
+			
 			if(arguments.length == 1) {
 				onLogin = data;
 				data = {};
@@ -22,7 +35,23 @@ exports.connect = function(host) {
 				data: data,
 				url: host + "/account.json",
 				success: function(resp) {
-					if(resp.errors) return onLogin(new Error(resp.errors[0]));
+					if(resp.errors) return onLogin(resp.errors);
+					onLogin(null, new Account(resp.result));
+				}
+			})
+		},
+
+
+		/**
+		 */
+
+		"static signup": function(data, onSignup) {
+			$.ajax({
+				type: "POST",
+				data: data,
+				url: host + "/account.json",
+				success: function(resp) {
+					if(resp.errors) return onLogin(resp.errors);
 					onLogin(null, new Account(resp.result));
 				}
 			})

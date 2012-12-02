@@ -1,6 +1,6 @@
 {
   "name": "auth",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "ERROR: No README.md file found!",
   "main": "./lib/index.js",
   "scripts": {
@@ -18,9 +18,11 @@
     "structr": "0.2.x",
     "underscore": "1.4.x",
     "dsync": "0.0.x",
-    "vine": "0.0.x",
+    "vine": "0.1.x",
     "dustjs-linkedin": "1.1.x",
-    "seq": "0.3.x"
+    "seq": "0.3.x",
+    "comerr": "0.0.x",
+    "verify": "0.0.x"
   },
   "browserify": "./browser/index.js",
   "devDependencies": {
