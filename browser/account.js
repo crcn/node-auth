@@ -3,7 +3,9 @@ _ = require("underscore");
 
 exports.connect = function(host) {
 
-	var host = window.location.host;
+	var host = window.location.origin;
+
+	// console.log(window.location)
 
 	var Account;
 	return Account = structr({
