@@ -3,7 +3,13 @@ _ = require("underscore");
 
 exports.connect = function(host) {
 
-	var host = window.location.origin;
+	var host = window.location.protocol + "//" + window.location.host;
+
+	if(window.location.port && String(window.location.port).length > 0) {
+		host += ":" + window.location.port;
+	}
+
+	console.log(host);
 
 	// console.log(window.location)
 
