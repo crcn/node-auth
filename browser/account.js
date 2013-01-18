@@ -10,7 +10,6 @@ exports.connect = function(host) {
 	}
 
 
-	// console.log(window.location)
 
 	var Account;
 	return Account = structr({
