@@ -9,7 +9,6 @@ exports.connect = function(host) {
 		host += ":" + window.location.port;
 	}
 
-	console.log(host);
 
 	// console.log(window.location)
 
